@@ -31,7 +31,7 @@ link_option:
 source:
 - list:
   - main.cpp
-  - local.cpp
+  - state.cpp
 
 libraries:
 - list:
