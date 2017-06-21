@@ -8,6 +8,8 @@
 #include <memory>
 #include <string>
 
+#include "fileinfo.hpp"
+
 namespace LUA
 {
 struct FileInfo;

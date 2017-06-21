@@ -8,7 +8,6 @@
 #include <string>
 #include <thread>
 
-#include "fileinfo.hpp"
 #include "local.hpp"
 
 namespace LUA
