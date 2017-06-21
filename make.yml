@@ -1,0 +1,42 @@
+variable:
+- name: compiler
+  value: clang++
+- name: archiver
+  value: ar
+- name: linker
+  value: clang++
+
+define:
+- list:
+  debug:
+  - DEBUG=1
+
+option:
+- list:
+  - c
+  - g
+  - std=c++14
+  - Wall
+  debug:
+  - O0
+  release:
+  - O3
+
+link_option:
+- list:
+  - g
+  - std=c++14
+  - Wall
+
+source:
+- list:
+  - main.cpp
+  - local.cpp
+
+libraries:
+- list:
+  - lua
+
+target:
+- name: luatest
+  type: execute
