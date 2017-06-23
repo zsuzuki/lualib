@@ -10,10 +10,6 @@ define:
 - list:
   debug: [ DEBUG=1 ]
 
-include:
-- list:
-  - modules/include
-
 option:
 - list:
   - c
