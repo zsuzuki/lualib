@@ -198,7 +198,7 @@ State::update()
       {
         if (r != LUA_YIELD)
         {
-          std::cerr << "Error: " << lua_tostring(L, -1) << std::endl;
+          std::cerr << "LuaError: " << lua_tostring(L, -1) << std::endl;
           running = false;
         }
         return false;

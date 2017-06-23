@@ -12,7 +12,7 @@ function co_test()
    return 1
 end
 
-t = Test.new(8)
+t = TEST.new(8)
 t:print()
 start_time = Time.Now()
 LOG("Hello, World")

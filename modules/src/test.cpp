@@ -23,6 +23,7 @@ public:
 
   static bool LuaSetup(lua_State* L)
   {
+    // define methods
     luaL_newmetatable(L, module_name);
     lua_pushstring(L, "__index");
     lua_newtable(L);
@@ -31,10 +32,13 @@ public:
     luaL_setfuncs(L, method_list.data(), 0);
     lua_rawset(L, -3);
     lua_pop(L, 1);
+
+    // define functions
     func_list.emplace_back(luaL_Reg{"new", create});
     func_list.emplace_back(luaL_Reg{nullptr, nullptr});
     luaL_newlib(L, func_list.data());
-    lua_setglobal(L, "Test");
+    lua_setglobal(L, "TEST");
+
     return true;
   }
 
