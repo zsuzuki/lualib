@@ -1,0 +1,11 @@
+include:
+- list:
+  - ../include
+
+source:
+- list:
+  - state.cpp
+
+target:
+- name: luactrl
+  type: library

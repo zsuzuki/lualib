@@ -1,0 +1,12 @@
+include:
+- list:
+  - ../include
+  - ../modules/include
+
+source:
+- list:
+  - main.cpp
+
+target:
+- name: test
+  type: passthrough

@@ -8,7 +8,9 @@
 #include <string>
 #include <thread>
 
-#include "state.hpp"
+#include <state.hpp>
+
+#include "fileinfo.hpp"
 
 namespace LUA
 {
@@ -29,6 +31,10 @@ load_module_wait(lua_State* L, int, lua_KContext)
   {
     std::cerr << "loadModule failed: " << lua_tostring(L, -1) << std::endl;
     lua_pushnil(L);
+  }
+  else
+  {
+    lua_pushboolean(L, true);
   }
   return 1;
 }
@@ -51,6 +57,10 @@ load_module_body(lua_State* L, int, lua_KContext ctx)
     std::cerr << "loadModule failed: " << lua_tostring(L, -1) << std::endl;
     lua_pushnil(L);
   }
+  else
+  {
+    lua_pushboolean(L, true);
+  }
   return 1;
 }
 
@@ -71,6 +81,16 @@ log_here(lua_State* L)
   size_t      len  = 0;
   const char* path = lua_tolstring(L, 1, &len);
   std::cout << path << std::endl;
+  return 0;
+}
+
+//
+int
+err_here(lua_State* L)
+{
+  size_t      len  = 0;
+  const char* path = lua_tolstring(L, 1, &len);
+  std::cerr << path << std::endl;
   return 0;
 }
 
@@ -253,6 +273,7 @@ State::setup()
 {
   lua_register(L, "loadModule", load_module_entry);
   lua_register(L, "LOG", log_here);
+  lua_register(L, "ERR", err_here);
   lua_register(L, "Yield", yield);
 
   luaL_newlib(L, random_funcs);
@@ -295,5 +316,14 @@ State::finish()
   clone = false;
   L     = nullptr;
 }
+
+//
+State::State() = default;
+State::State(const State& s)
+{
+  L     = s.L;
+  clone = true;
+}
+State::~State() { finish(); }
 
 } // namespace LUA

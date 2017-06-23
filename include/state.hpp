@@ -8,8 +8,6 @@
 #include <memory>
 #include <string>
 
-#include "fileinfo.hpp"
-
 namespace LUA
 {
 struct FileInfo;
@@ -67,13 +65,9 @@ class State
   bool check_fileinfo();
 
 public:
-  State() = default;
-  State(const State& s)
-  {
-    L     = s.L;
-    clone = true;
-  }
-  ~State() { finish(); }
+  State();
+  State(const State& s);
+  ~State();
 
   void start();
   void finish();
@@ -97,8 +91,8 @@ public:
 
   bool update(); // execute complete = true
 
-  bool isRunning() const { return standby || running; }
-  operator lua_State*() { return L; }
-  bool operator()() { return L != nullptr; }
+  bool       isRunning() const { return standby || running; }
+  lua_State* getLua() const { return L; }
+  bool       operator()() { return L != nullptr; }
 };
 } // namespace LUA

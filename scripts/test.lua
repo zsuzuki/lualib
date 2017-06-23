@@ -12,6 +12,8 @@ function co_test()
    return 1
 end
 
+t = Test.new(8)
+t:print()
 start_time = Time.Now()
 LOG("Hello, World")
 cr = coroutine.create(co_test)
@@ -27,6 +29,7 @@ until coroutine.status(cr) == "dead"
 
 end_time = Time.Now()
 LOG(string.format("NowTime: %d",end_time - start_time))
+ERR("--- error test ---")
 
 Yield(0)
 

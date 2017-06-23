@@ -1,0 +1,12 @@
+
+include:
+- list:
+  - include
+
+source:
+- list:
+  - src/test.cpp
+
+target:
+- name: module
+  type: library

@@ -5,7 +5,8 @@
 #include <memory>
 #include <string>
 
-#include "state.hpp"
+#include <state.hpp>
+#include <test.hpp>
 
 //
 int
@@ -19,6 +20,8 @@ main(int argc, char** argv)
 
   auto state = std::make_unique<LUA::State>();
   state->start();
+
+  TEST::Test::LuaSetup(state->getLua());
   state->runFile(argv[1]);
 
   while (state->update() == false)

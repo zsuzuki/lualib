@@ -8,8 +8,11 @@ variable:
 
 define:
 - list:
-  debug:
-  - DEBUG=1
+  debug: [ DEBUG=1 ]
+
+include:
+- list:
+  - modules/include
 
 option:
 - list:
@@ -17,25 +20,25 @@ option:
   - g
   - std=c++14
   - Wall
-  debug:
-  - O0
-  release:
-  - O3
+  debug: [ O0 ]
+  release: [ O3 ]
+
+archive_option:
+- list:
+  - rcs
 
 link_option:
-- list:
-  - g
-  - std=c++14
-  - Wall
-
-source:
-- list:
-  - main.cpp
-  - state.cpp
+- list: [ g ]
 
 libraries:
 - list:
   - lua
+
+subdir:
+- list:
+  - modules
+  - src
+  - test
 
 target:
 - name: luatest

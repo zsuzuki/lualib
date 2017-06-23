@@ -2,8 +2,7 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "0.1.0",
-    "command": "sh",
-    "isShellCommand": true,
+    "isShellCommand": false,
     "args": [],
     "showOutput": "always",
     "tasks": [
@@ -11,7 +10,7 @@
             "taskName": "setup",
             "showOutput": "silent",
             "command": "cbuild",
-            "isBuildCommand": false,
+            "isBuildCommand": true,
             "problemMatcher": [
                 "$tsc",
                 "$lessCompile"
@@ -21,7 +20,7 @@
             "taskName": "build",
             "command": "ninja",
             "showOutput": "silent",
-            "isBuildCommand": true,
+            "isBuildCommand": false,
             "problemMatcher": {
                 "owner": "cpp",
                 "fileLocation": "absolute",
