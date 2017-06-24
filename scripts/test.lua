@@ -13,7 +13,9 @@ function co_test()
 end
 
 t = TEST.new(8)
-t:print()
+t:print(4)
+print(t.num)
+print(t.real)
 start_time = Time.Now()
 LOG("Hello, World")
 cr = coroutine.create(co_test)
