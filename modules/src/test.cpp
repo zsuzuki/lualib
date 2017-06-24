@@ -5,6 +5,7 @@
 #include <test.hpp>
 #include <vector>
 
+#include <args.hpp>
 #include <literal.hpp>
 
 namespace TEST
@@ -32,8 +33,10 @@ class Impl
   int num = 0;
 
 public:
-  Impl() {}
-  ~Impl() {}
+  Impl() { std::cout << "createImpl" << std::endl; }
+  ~Impl() { std::cout << "clearImpl" << std::endl; }
+
+  void print(int a) { std::cout << "print: " << num + a << std::endl; }
 
   static bool LuaSetup(lua_State* L)
   {
@@ -57,6 +60,11 @@ public:
       l.storeLiteral(L);
     }
     lua_rawset(L, -3);
+    {
+      lua_pushstring(L, "__gc");
+      lua_pushcfunction(L, clear);
+      lua_rawset(L, -3);
+    }
     lua_pop(L, 1);
     // define functions
     luaL_newlib(L, func_list.data());
@@ -69,34 +77,37 @@ public:
   static std::pair<I*, int> getSelf(lua_State* L)
   {
     int   num  = -lua_gettop(L);
-    auto* self = reinterpret_cast<I*>(luaL_checkudata(L, num, module_name));
-    return std::make_pair(self, num + 1);
+    auto* self = reinterpret_cast<I**>(luaL_checkudata(L, num, module_name));
+    return std::make_pair(*self, num + 1);
   }
 
   static int create(lua_State* L)
   {
+    LUA::Args args(L);
+
     auto* ni = new Impl;
-    ni->store(L);
+    ni->num  = args.getInteger(0);
+    Impl** p = reinterpret_cast<Impl**>(lua_newuserdata(L, sizeof(Impl*)));
+    if (p)
+    {
+      // lua_pushlightuserdata(L, this);
+      *p = ni;
+      luaL_getmetatable(L, module_name);
+      lua_setmetatable(L, -2);
+    }
+    else
+    {
+      lua_pushnil(L);
+    }
+
     return 1;
   }
   static int clear(lua_State* L)
   {
     auto self = getSelf<Impl>(L);
     delete self.first;
-    std::cout << "clear" << std::endl;
     return 0;
   }
-
-  void store(lua_State* L)
-  {
-    num = luaL_checkinteger(L, -1);
-    lua_pushlightuserdata(L, this);
-    int r = luaL_getmetatable(L, module_name);
-    std::cout << "create: " << r << std::endl;
-    lua_setmetatable(L, -2);
-  }
-
-  void print(int a) { std::cout << "print: " << num + a << std::endl; }
 
   static int print_static(lua_State* L)
   {
