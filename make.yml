@@ -16,6 +16,9 @@ option:
   - g
   - std=c++14
   - Wall
+  - MMD
+  - MT $out
+  - MF $dep
   debug: [ O0 ]
   release: [ O3 ]
 

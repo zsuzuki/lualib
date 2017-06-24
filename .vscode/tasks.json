@@ -23,7 +23,10 @@
             "isBuildCommand": false,
             "problemMatcher": {
                 "owner": "cpp",
-                "fileLocation": "absolute",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
                     "file": 1,
