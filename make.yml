@@ -5,10 +5,20 @@ variable:
   value: ar
 - name: linker
   value: clang++
+- name: compiler
+  value: "g++-5"
+  type: LINUX
+- name: linker
+  value: "g++-5"
+  type: LINUX
 
 define:
 - list:
   debug: [ DEBUG=1 ]
+
+include:
+- list:
+  - /usr/local/include
 
 option:
 - list:
@@ -27,17 +37,21 @@ archive_option:
   - rcs
 
 link_option:
-- list: [ g ]
+- list: [ g, L/usr/local/lib ]
 
 libraries:
 - list:
   - lua
+- type: LINUX
+  list:
+  - dl
+  - pthread
 
 subdir:
 - list:
+  - test
   - modules
   - src
-  - test
 
 target:
 - name: luatest
