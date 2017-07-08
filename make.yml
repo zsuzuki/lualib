@@ -7,18 +7,18 @@ variable:
   value: clang++
 - name: compiler
   value: "g++-5"
-  type: LINUX
+  type: c9
 - name: linker
   value: "g++-5"
-  type: LINUX
+  type: c9
 
 define:
 - list:
   debug: [ DEBUG=1 ]
 
 include:
-- list:
-  - /usr/local/include
+- type: c9
+  list: [ /usr/local/include ]
 
 option:
 - list:
@@ -37,15 +37,15 @@ archive_option:
   - rcs
 
 link_option:
-- list: [ g, L/usr/local/lib ]
+- list: [ g ]
+- type: c9
+  list: [ L/usr/local/lib ]
 
 libraries:
 - list:
   - lua
-- type: LINUX
-  list:
-  - dl
-  - pthread
+- type: c9
+  list: [ dl, pthread ]
 
 subdir:
 - list:
