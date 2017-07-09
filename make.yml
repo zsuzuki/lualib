@@ -23,7 +23,7 @@ include:
 option:
 - list:
   - c
-  - g
+  - g3
   - std=c++14
   - Wall
   - MMD
@@ -37,7 +37,7 @@ archive_option:
   - rcs
 
 link_option:
-- list: [ g ]
+- list: [ g3 ]
 - type: c9
   list: [ L/usr/local/lib ]
 
