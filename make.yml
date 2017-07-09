@@ -1,24 +1,17 @@
 variable:
-- name: compiler
-  value: clang++
-- name: archiver
-  value: ar
-- name: linker
-  value: clang++
-- name: compiler
-  value: "g++-5"
-  type: c9
-- name: linker
-  value: "g++-5"
-  type: c9
+- {name: compiler_command, value: "clang++"}
+- {name: compiler_command, value: "g++-5", type: c9}
+
+- {name: compiler, value: "${compiler_command}"}
+- {name: archiver, value: ar}
+- {name: linker,   value: "${compiler_command}"}
 
 define:
 - list:
-  debug: [ DEBUG=1 ]
+  debugie: [ DEBUG=1 ]
 
 include:
-- type: c9
-  list: [ /usr/local/include ]
+- {type: c9, list: [ /usr/local/include ]}
 
 option:
 - list:
@@ -33,19 +26,15 @@ option:
   release: [ O3 ]
 
 archive_option:
-- list:
-  - rcs
+- list: [ rcs ]
 
 link_option:
 - list: [ g3 ]
-- type: c9
-  list: [ L/usr/local/lib ]
+- {type: c9, list: [ L/usr/local/lib ]}
 
 libraries:
-- list:
-  - lua
-- type: c9
-  list: [ dl, pthread ]
+- list: [ lua ]
+- {type: c9, list: [ dl, pthread ]}
 
 subdir:
 - list:
