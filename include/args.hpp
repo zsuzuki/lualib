@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include <algorithm>
 #include <lua.hpp>
 
 namespace LUA
@@ -18,11 +19,12 @@ public:
 
   lua_Integer getInteger(int n) const { return luaL_checkinteger(L, num + n); }
   lua_Number getNumber(int n) const { return luaL_checknumber(L, num + n); }
+  bool getBoolean(int n) const { return lua_toboolean(L, num + n); }
   const char* getString(int n) const { return luaL_checkstring(L, num + n); }
   template <typename Ty>
   Ty* getUserData(int n, const char* name) const
   {
-    return luaL_checkudata(L, num + n, name);
+    return reinterpret_cast<Ty*>(luaL_checkudata(L, num + n, name));
   }
 };
 

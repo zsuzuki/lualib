@@ -7,19 +7,13 @@
 
 #include <args.hpp>
 #include <literal.hpp>
+#include <module.hpp>
 
 namespace TEST
 {
 
 using FunctionList = std::vector<luaL_Reg>;
 using LiteralList  = std::vector<LUA::Literal>;
-
-struct MetaInfo
-{
-  FunctionList methods;
-  FunctionList functions;
-  LiteralList  literals;
-};
 
 //
 class Impl
@@ -44,6 +38,7 @@ public:
     method_list.emplace_back(luaL_Reg{"print", print_static});
     literal_list.emplace_back(LUA::Literal{"num", LUA::Literal::Integer(57)});
     literal_list.emplace_back(LUA::Literal{"real", LUA::Literal::Number(6.4)});
+    literal_list.emplace_back(LUA::Literal{"b", LUA::Literal::Boolean(true)});
     func_list.emplace_back(luaL_Reg{"new", create});
 
     // list close
@@ -73,12 +68,11 @@ public:
     return true;
   }
 
-  template <class I>
-  static std::pair<I*, int> getSelf(lua_State* L)
+  static std::pair<Impl*, LUA::Args> getSelf(lua_State* L)
   {
-    int   num  = -lua_gettop(L);
-    auto* self = reinterpret_cast<I**>(luaL_checkudata(L, num, module_name));
-    return std::make_pair(*self, num + 1);
+    LUA::Args args{L};
+    Impl**    self = args.getUserData<Impl*>(0, module_name);
+    return std::make_pair(*self, args);
   }
 
   static int create(lua_State* L)
@@ -90,7 +84,6 @@ public:
     Impl** p = reinterpret_cast<Impl**>(lua_newuserdata(L, sizeof(Impl*)));
     if (p)
     {
-      // lua_pushlightuserdata(L, this);
       *p = ni;
       luaL_getmetatable(L, module_name);
       lua_setmetatable(L, -2);
@@ -104,16 +97,15 @@ public:
   }
   static int clear(lua_State* L)
   {
-    auto self = getSelf<Impl>(L);
+    auto self = getSelf(L);
     delete self.first;
     return 0;
   }
 
   static int print_static(lua_State* L)
   {
-    auto self = getSelf<Impl>(L);
-    int  add  = luaL_checkinteger(L, self.second);
-    self.first->print(add);
+    auto self = getSelf(L);
+    self.first->print(self.second.getInteger(1));
     return 0;
   };
 };
@@ -133,5 +125,35 @@ Test::LuaSetup(lua_State* L)
 {
   return Impl::LuaSetup(L);
 }
+
+namespace
+{
+void
+init_test(Impl*, LUA::Args&)
+{
+}
+const char*
+get_module_name()
+{
+  return "TEST";
+}
+}
+
+class TestModule : public LUA::Module<Impl, init_test, get_module_name>
+{
+public:
+  static void setup()
+  {
+    storeLiteral("num", LUA::Literal::Integer(39));
+    storeLiteral("real", LUA::Literal::Number(9.3));
+    storeLiteral("b", LUA::Literal::Boolean(true));
+  }
+  static int print_static(lua_State* L)
+  {
+    auto self = getSelf(L);
+    self.first->print(self.second.getInteger(1));
+    return 0;
+  }
+};
 
 } // namespace TEST
