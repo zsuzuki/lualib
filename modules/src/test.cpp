@@ -27,8 +27,8 @@ class Impl
   int num = 0;
 
 public:
-  Impl() { std::cout << "createImpl" << std::endl; }
-  ~Impl() { std::cout << "clearImpl" << std::endl; }
+  Impl()  = default;
+  ~Impl() = default;
 
   void print(int a) { std::cout << "print: " << num + a << std::endl; }
 

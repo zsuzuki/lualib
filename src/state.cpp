@@ -11,6 +11,7 @@
 #include <state.hpp>
 
 #include "fileinfo.hpp"
+#include "log.hpp"
 
 namespace LUA
 {
@@ -74,31 +75,11 @@ load_module_entry(lua_State* L)
   return lua_yieldk(L, 0, ctx, load_module_body);
 }
 
-//
-int
-log_here(lua_State* L)
-{
-  size_t      len  = 0;
-  const char* path = lua_tolstring(L, 1, &len);
-  std::cout << path << std::endl;
-  return 0;
-}
-
-//
-int
-err_here(lua_State* L)
-{
-  size_t      len  = 0;
-  const char* path = lua_tolstring(L, 1, &len);
-  std::cerr << path << std::endl;
-  return 0;
-}
-
 // yield
 int
 yield_continue(lua_State* L, int, lua_KContext)
 {
-  std::cout << "system yield" << std::endl;
+  LOG_PUT(LOG::Level::Check, "system yield");
   return 0;
 }
 int
@@ -271,9 +252,8 @@ State::check_fileinfo()
 void
 State::setup()
 {
+  LOG::Setup(L);
   lua_register(L, "loadModule", load_module_entry);
-  lua_register(L, "LOG", log_here);
-  lua_register(L, "ERR", err_here);
   lua_register(L, "Yield", yield);
 
   luaL_newlib(L, random_funcs);
@@ -285,13 +265,45 @@ State::setup()
 
 //
 void
-State::start()
+State::setup_argument(int argc, char** argv)
+{
+  lua_newtable(L);
+  for (int ai = 2; ai < argc; ai++)
+  {
+    std::string arg = argv[ai];
+    if (arg == "=")
+    {
+      continue;
+    }
+
+    auto fpos = arg.find("=");
+    if (fpos == std::string::npos)
+    {
+      lua_pushstring(L, arg.c_str());
+      lua_pushboolean(L, true);
+    }
+    else
+    {
+      auto value = arg.substr(fpos + 1);
+      lua_pushstring(L, arg.substr(0, fpos).c_str());
+      lua_pushstring(L, value.c_str());
+    }
+    lua_settable(L, -3);
+  }
+
+  lua_setglobal(L, "ARGS");
+}
+
+//
+void
+State::start(int argc, char** argv)
 {
   if (L == nullptr)
   {
     L = luaL_newstate();
     luaL_openlibs(L);
     setup();
+    setup_argument(argc, argv);
   }
 }
 

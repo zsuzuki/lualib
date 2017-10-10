@@ -62,6 +62,7 @@ class State
   ModuleList  ml;
 
   void setup();
+  void setup_argument(int argc, char** argv);
   bool check_fileinfo();
 
 public:
@@ -69,7 +70,7 @@ public:
   State(const State& s);
   ~State();
 
-  void start();
+  void start(int argc, char** argv);
   void finish();
 
   bool loadBuffer(const char* buffer, size_t sz, const char* bname)

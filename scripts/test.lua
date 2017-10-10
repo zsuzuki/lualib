@@ -4,21 +4,26 @@
 ]]
 function co_test()
    for i = 1,8,1 do
-      LOG(string.format("co_test: %x",Random.getInt()))
+      LOG.CHECK(string.format("co_test: %x",Random.getInt()))
       coroutine.yield(0)
    end
    coroutine.yield(0)
-   LOG("co_test done.")
+   LOG.CHECK("co_test done.")
    return 1
+end
+
+lv = tonumber(ARGS["TLEVEL"])
+if lv then
+    LOG.LEVEL(lv)
 end
 
 t = TEST.new(8)
 t:print(4)
-print(t.num)
-print(t.real)
-print(t.b)
+LOG.NORMAL(t.num)
+LOG.NORMAL(t.real)
+LOG.NORMAL(t.b)
 start_time = Time.Now()
-LOG("Hello, World")
+LOG.NORMAL("Hello","World")
 cr = coroutine.create(co_test)
 coroutine.resume(cr)
 
@@ -26,17 +31,17 @@ r = coroutine.yield(0)
 repeat
    local bStat, vRet = coroutine.resume(cr)
     if bStat == false then
-        LOG(string.format("assert! -> %d",vRet))
+        LOG.NORMAL(string.format("assert! -> %d",vRet))
     end
 until coroutine.status(cr) == "dead"
 
 end_time = Time.Now()
-LOG(string.format("NowTime: %d",end_time - start_time))
-ERR("--- error test ---")
+LOG.NORMAL("Time:",string.format("NowTime: %d",end_time - start_time))
+LOG.NORMAL("CPU: ",os.clock())
 
 Yield(0)
 
-LOG("finish.")
+LOG.NORMAL("finish.")
 
 return 0
 -- End

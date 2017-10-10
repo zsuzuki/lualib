@@ -8,7 +8,7 @@ variable:
 
 define:
 - list:
-  debugie: [ DEBUG=1 ]
+  debug: [ DEBUG=1 ]
 
 include:
 - {type: c9, list: [ /usr/local/include ]}

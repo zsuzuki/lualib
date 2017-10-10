@@ -18,8 +18,9 @@ main(int argc, char** argv)
     return 1;
   }
 
+  std::cout << "Application: start" << std::endl;
   auto state = std::make_unique<LUA::State>();
-  state->start();
+  state->start(argc, argv);
 
   TEST::Test::LuaSetup(state->getLua());
   state->runFile(argv[1]);
@@ -29,7 +30,7 @@ main(int argc, char** argv)
   }
 
   state->finish();
-  std::cout << "all done" << std::endl;
+  std::cout << "Application: all done" << std::endl;
   return 0;
 }
 

@@ -6,7 +6,7 @@ AlwaysBreakAfterReturnType: TopLevelDefinitions
 AlignConsecutiveAssignments: true
 AlignTrailingComments: true
 AlwaysBreakTemplateDeclarations: true
-ColumnLimit: 130
+ColumnLimit: 120
 Cpp11BracedListStyle: true
 AlignConsecutiveDeclarations: true
 AlignEscapedNewlinesLeft: true

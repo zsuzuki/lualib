@@ -5,6 +5,7 @@ include:
 source:
 - list:
   - state.cpp
+  - log.cpp
 
 target:
 - name: luactrl
