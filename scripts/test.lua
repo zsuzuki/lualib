@@ -18,10 +18,11 @@ if lv then
 end
 
 t = TEST.new(8)
-t:print(4)
+t:print(2)
 LOG.NORMAL(t.num)
 LOG.NORMAL(t.real)
 LOG.NORMAL(t.b)
+t:print(3)
 start_time = Time.Now()
 LOG.NORMAL("Hello","World")
 cr = coroutine.create(co_test)

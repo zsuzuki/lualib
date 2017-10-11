@@ -22,7 +22,7 @@ main(int argc, char** argv)
   auto state = std::make_unique<LUA::State>();
   state->start(argc, argv);
 
-  TEST::Test::LuaSetup(state->getLua());
+  TEST::Setup(state->getLua());
   state->runFile(argv[1]);
 
   while (state->update() == false)

@@ -14,17 +14,19 @@ class Args
   lua_State* L;
   int        num;
 
-public:
-  Args(lua_State* lua) : L(lua) { num = -lua_gettop(L); }
+  int geti(int n) const { return (n >= num) ? 1 : n + 1; }
 
-  lua_Integer getInteger(int n) const { return luaL_checkinteger(L, num + n); }
-  lua_Number getNumber(int n) const { return luaL_checknumber(L, num + n); }
-  bool getBoolean(int n) const { return lua_toboolean(L, num + n); }
-  const char* getString(int n) const { return luaL_checkstring(L, num + n); }
+public:
+  Args(lua_State* lua) : L(lua) { num = lua_gettop(L); }
+
+  lua_Integer getInteger(int n) const { return luaL_checkinteger(L, geti(n)); }
+  lua_Number getNumber(int n) const { return luaL_checknumber(L, geti(n)); }
+  bool getBoolean(int n) const { return lua_toboolean(L, geti(n)); }
+  const char* getString(int n) const { return luaL_checkstring(L, geti(n)); }
   template <typename Ty>
   Ty* getUserData(int n, const char* name) const
   {
-    return reinterpret_cast<Ty*>(luaL_checkudata(L, num + n, name));
+    return reinterpret_cast<Ty*>(luaL_checkudata(L, geti(n), name));
   }
 };
 

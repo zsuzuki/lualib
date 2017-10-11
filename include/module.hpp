@@ -4,8 +4,9 @@
 #pragma once
 
 #include <algorithm>
-#include <lua.hpp>
 #include <vector>
+
+#include <lua.hpp>
 
 #include "args.hpp"
 #include "literal.hpp"
@@ -14,33 +15,39 @@ namespace LUA
 {
 
 template <class Impl, void init_func(Impl*, Args&), const char* get_name()>
-class Module
+class ModuleSetup
 {
 protected:
   using FunctionList = std::vector<luaL_Reg>;
   using LiteralList  = std::vector<Literal>;
   using LuaFuncion   = int (*)(lua_State*);
 
-  static FunctionList method_list;
-  static FunctionList func_list;
-  static LiteralList  literal_list;
+  FunctionList method_list{};
+  FunctionList func_list{};
+  LiteralList  literal_list{};
 
-  static void storeLiteral(const char* name, Literal::Integer lit) { literal_list.emplace_back(Literal{name, lit}); }
-  static void storeLiteral(const char* name, Literal::Number lit) { literal_list.emplace_back(Literal{name, lit}); }
-  static void storeLiteral(const char* name, Literal::String lit) { literal_list.emplace_back(Literal{name, lit}); }
-  static void storeLiteral(const char* name, Literal::Boolean lit) { literal_list.emplace_back(Literal{name, lit}); }
+  bool is_initialized_ = false;
 
-  static void storeMethod(const char* name, LuaFuncion func) { method_list.emplace_back(name, func); }
-  static void storeFunction(const char* name, LuaFuncion func) { func_list.emplace_back(name, func); }
+  void storeLiteral(const char* name, Literal::Integer lit) { literal_list.emplace_back(Literal{name, lit}); }
+  void storeLiteral(const char* name, Literal::Number lit) { literal_list.emplace_back(Literal{name, lit}); }
+  void storeLiteral(const char* name, Literal::String lit) { literal_list.emplace_back(Literal{name, lit}); }
+  void storeLiteral(const char* name, Literal::Boolean lit) { literal_list.emplace_back(Literal{name, lit}); }
 
-public:
-  bool Setup(lua_State* L)
+  void storeMethod(const char* name, LuaFuncion func) { method_list.emplace_back(luaL_Reg{name, func}); }
+  void storeFunction(const char* name, LuaFuncion func) { func_list.emplace_back(luaL_Reg{name, func}); }
+
+  virtual bool setupLocal(lua_State*) = 0;
+
+  void setup_finish(lua_State* L)
   {
     // list close
     func_list.emplace_back(luaL_Reg{"new", create});
     method_list.emplace_back(luaL_Reg{nullptr, nullptr});
     func_list.emplace_back(luaL_Reg{nullptr, nullptr});
+  }
 
+  bool setup(lua_State* L)
+  {
     // define methods
     luaL_newmetatable(L, get_name());
     lua_pushstring(L, "__index");
@@ -65,7 +72,6 @@ public:
     return true;
   }
 
-protected:
   static std::pair<Impl*, LUA::Args> getSelf(lua_State* L)
   {
     LUA::Args args{L};
@@ -88,6 +94,7 @@ protected:
     }
     else
     {
+      delete ni;
       lua_pushnil(L);
     }
 
@@ -98,6 +105,24 @@ protected:
     auto self = getSelf(L);
     delete self.first;
     return 0;
+  }
+
+public:
+  virtual ~ModuleSetup() = default;
+
+  bool Setup(lua_State* L)
+  {
+    if (is_initialized_ == false)
+    {
+      if (setupLocal(L) == false)
+      {
+        return false;
+      }
+      setup_finish(L);
+      is_initialized_ = true;
+    }
+    setup(L);
+    return true;
   }
 };
 
