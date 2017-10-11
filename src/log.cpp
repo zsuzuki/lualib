@@ -1,9 +1,10 @@
 //
 // Debug log print utility
 //
-#include <iostream>
-#include <lua.hpp>
 #include <map>
+#include <stdlib.h>
+
+#include <lua.hpp>
 
 #include "log.hpp"
 
@@ -13,27 +14,29 @@ namespace LUA
 namespace
 {
 
-LOG::Level s_level = LOG::Level::Normal;
+auto output = stdout; // log output file
+
+LOG::Level s_level = LOG::Level::Normal; // log level
 
 std::map<LOG::Level, const char*> level_string = {{LOG::Level::Check, "CHECK"},
                                                   {LOG::Level::Normal, "NORMAL"},
                                                   {LOG::Level::Warning, "WARNING"},
-                                                  {LOG::Level::Important, "FATAL"}};
+                                                  {LOG::Level::Important, "IMPORTANT"}};
 
 //
 void
 print_start(lua_State* L, LOG::Level l)
 {
-  std::cout << "[" << level_string[l] << "]:";
+  fprintf(output, "[%s]:", level_string[l]);
   lua_Debug ar;
   if (lua_getstack(L, 1, &ar))
   {
     lua_getinfo(L, "Sl", &ar);
-    std::cout << ar.source << "(" << ar.currentline << "): ";
+    fprintf(output, "%s(%d): ", ar.source, ar.currentline);
   }
   else
   {
-    std::cout << "not information: ";
+    fprintf(output, "** not information **: ");
   }
 }
 
@@ -41,7 +44,7 @@ print_start(lua_State* L, LOG::Level l)
 void
 print_end(lua_State*)
 {
-  std::cout << std::endl;
+  fprintf(output, "\n");
 }
 
 //
@@ -50,7 +53,7 @@ print_body(const char* format, ...)
 {
   va_list args;
   va_start(args, format);
-  vfprintf(stdout, format, args);
+  vfprintf(output, format, args);
   va_end(args);
 }
 
@@ -163,7 +166,7 @@ LogPut(Level lv, const char* file, int line, const char* fmt, ...)
   snprintf(new_fmt, sizeof(new_fmt), "%s(%d): %s\n", file, line, fmt);
   va_list args;
   va_start(args, fmt);
-  vfprintf(stdout, new_fmt, args);
+  vfprintf(output, new_fmt, args);
   va_end(args);
 }
 
