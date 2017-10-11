@@ -13,6 +13,9 @@
 namespace TEST
 {
 
+//
+// test class implement
+//
 class Test
 {
   int m_n = 0;
@@ -32,22 +35,28 @@ public:
   }
 };
 
+//
+// local functions
+//
 namespace
 {
 void
-init_test(Test* t, LUA::Args&)
+init_test(Test* t, LUA::Args& args)
 {
-  t->print(0);
+  t->print(args.getInteger(0));
 }
 
 const char*
-get_module_name()
+test_module_name()
 {
   return "TEST";
 }
 }
 
-class TestModuleImpl : public LUA::ModuleSetup<Test, init_test, get_module_name>
+//
+// module setup class
+//
+class TestModuleImpl : public LUA::ModuleSetup<Test, init_test, test_module_name>
 {
 protected:
   bool setupLocal(lua_State* L) override
@@ -68,7 +77,7 @@ public:
 };
 
 //
-//
+// external interface
 //
 namespace
 {
