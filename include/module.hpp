@@ -30,7 +30,7 @@
 namespace LUA
 {
 
-template <class Impl, void init_func(Impl*, Args&), const char* get_name()>
+template <class Impl, Impl* init_func(Args&), const char* get_name()>
 class ModuleSetup
 {
 protected:
@@ -99,8 +99,14 @@ protected:
   {
     LUA::Args args(L);
 
-    auto* ni = new Impl;
-    init_func(ni, args);
+    auto* ni = init_func(args);
+    if (ni == nullptr)
+    {
+      delete ni;
+      lua_pushnil(L);
+      return 1;
+    }
+
     Impl** p = reinterpret_cast<Impl**>(lua_newuserdata(L, sizeof(Impl*)));
     if (p)
     {

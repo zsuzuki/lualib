@@ -35,7 +35,7 @@ class Test
   int m_c = 0;
 
 public:
-  Test()  = default;
+  Test(int n) : m_n(n) {}
   ~Test() = default;
 
   void add(int n) { m_n += n; }
@@ -53,10 +53,11 @@ public:
 //
 namespace
 {
-void
-init_test(Test* t, LUA::Args& args)
+Test*
+init_test(LUA::Args& args)
 {
-  t->print(args.getInteger(0));
+  auto t = new Test(args.getInteger(0));
+  return t;
 }
 
 const char*
