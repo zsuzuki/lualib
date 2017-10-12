@@ -60,6 +60,12 @@ init_test(LUA::Args& args)
   return t;
 }
 
+void
+clear_func(Test* t)
+{
+  std::cout << "clear Test" << std::endl;
+}
+
 const char*
 test_module_name()
 {
@@ -70,7 +76,7 @@ test_module_name()
 //
 // module setup class
 //
-class TestModuleImpl : public LUA::ModuleSetup<Test, init_test, test_module_name>
+class TestModuleImpl : public LUA::ModuleSetup<Test, init_test, clear_func, test_module_name>
 {
 protected:
   bool setupLocal(lua_State* L) override

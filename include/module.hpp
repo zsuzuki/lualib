@@ -30,7 +30,7 @@
 namespace LUA
 {
 
-template <class Impl, Impl* init_func(Args&), const char* get_name()>
+template <class Impl, Impl* init_func(Args&), void clear_func(Impl*), const char* get_name()>
 class ModuleSetup
 {
 protected:
@@ -125,7 +125,9 @@ protected:
   static int clear(lua_State* L)
   {
     auto self = getSelf(L);
-    delete self.first;
+    auto p    = self.first;
+    clear_func(p);
+    delete p;
     return 0;
   }
 
