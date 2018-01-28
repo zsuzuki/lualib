@@ -1,58 +1,48 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "0.1.0",
-    "isShellCommand": false,
-    "args": [],
-    "showOutput": "always",
-    "tasks": [
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "cbuild && ninja",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
         {
-            "taskName": "setup",
-            "showOutput": "silent",
-            "command": "cbuild",
-            "isBuildCommand": true,
-            "problemMatcher": [
-                "$tsc",
-                "$lessCompile"
-            ]
+          "owner": "cpp",
+          "fileLocation": ["relative", "${workspaceRoot}"],
+          "pattern": {
+            "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+          }
         },
         {
-            "taskName": "build",
-            "command": "ninja",
-            "showOutput": "silent",
-            "isBuildCommand": false,
-            "problemMatcher": [
-                {
-                    "owner": "cpp",
-                    "fileLocation": [
-                        "relative",
-                        "${workspaceRoot}"
-                    ],
-                    "pattern": {
-                        "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                        "file": 1,
-                        "line": 2,
-                        "column": 3,
-                        "severity": 4,
-                        "message": 5
-                    }
-                },
-                {
-                    "owner": "clang++",
-                    "fileLocation": [
-                        "relative",
-                        "${workspaceRoot}"
-                    ],
-                    "pattern": {
-                        "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                        "file": 1,
-                        "line": 2,
-                        "column": 3,
-                        "severity": 4,
-                        "message": 5
-                    }
-                }
-            ]
+          "owner": "clang++",
+          "fileLocation": ["relative", "${workspaceRoot}"],
+          "pattern": {
+            "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+          }
         }
-    ]
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
 }
